@@ -1,0 +1,54 @@
+<html>
+<head>
+ <meta charset="UTF-8">
+<title>Artiljerija</title>
+<link rel="stylesheet" href="css/style.css" type="text/css">
+
+<script type="text/javascript" src="js/jQuery/jquery-1.12.1.min.js"></script>
+<script type="text/javascript" src="js/socket/socket.io.js"></script>
+<script type="text/javascript" src="js/socket/socketEvents.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script language="javascript">
+
+</script>
+</head>
+
+<body>
+	<div id="bp">
+	<form name="parametri">
+		<input type="button" value="Opali" onClick="ozezi(parametri);"/>
+
+			Ugao:<input type="text" name="ugao" />
+			Snaga:<input type="text" name="snaga" />
+	</form>
+		<span id="ugao"></span>
+		<span id="snaga"></span>
+		<span id="damage"></span>
+		<span id="pozicija"></span>
+	</div>
+
+
+
+
+
+	<canvas id="teren" width="900" height="400" >
+	</canvas>
+
+    <canvas id="rupe" width="900" height="400" >
+	</canvas>
+    <canvas id="metak" width="900" height="400" >
+	</canvas>
+	<canvas id="crtanje" width="900" height="400">
+	</canvas>
+
+  <div id="igrac">
+	</div>
+
+  <div id='powerBar'>
+    <div id='power'>
+      <div id='powerBackground'></div>
+    </div>
+  </div>
+
+</body>
+</html>

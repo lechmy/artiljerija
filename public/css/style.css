@@ -1,0 +1,73 @@
+#bp
+{
+position:absolute;
+top:410px;
+left:0px;
+width:500px;
+height:60px;
+background-color:green;
+padding:10px;
+border-color:black;
+border-style:solid;
+}
+#igrac
+{
+position:absolute;
+top:320px;
+left:700px;
+width:30px;
+height:30px;
+background-color:green;
+}
+body
+{
+background-color:gray;
+}
+canvas
+{
+position:absolute;
+top:0px;
+left:0px;
+border-bottom-style:solid;
+border-color:black;
+}
+#powerBar{
+  position: absolute;
+  width: 100px;
+  height: 25px;
+  border: 3px solid black;
+}
+#power{
+  width:0px;
+  height: 25px;
+  overflow: hidden;
+}
+#powerBackground{
+  width: 100px;
+  height: 25px;
+  background: linear-gradient(to right, yellow , red);
+}
+#ugao
+{
+position:absolute;
+top:40px;
+left:10px;
+}
+#snaga
+{
+position:absolute;
+top:60px;
+left:10px;
+}
+#damage
+{
+position:absolute;
+top:40px;
+left:100px;
+}
+#pozicija
+{
+position:absolute;
+top:60px;
+left:100px;
+}
