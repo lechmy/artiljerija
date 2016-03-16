@@ -28,11 +28,13 @@ var pvreme,pv;
 
 var fps=60;
 var igrac_na_potezu=2;
+var emitPlayerChange;
+var playerNumber;
 var path;
 var distance=0;
 var powerMAX,powerMIN;
-var player1={ x:80, y:349, poeni:0 };
-var player2={ x:690, y:349, poeni:0 };
+var you={};
+var enemy={};
 var shooter={ x:0, y:0, poeni:0 };
 var target={ x:0, y:0, poeni:0 };
 var aim={ x:0, y:0};
@@ -51,11 +53,6 @@ var shell={ trajectory:{
           };
 
 $(document).ready(function(){
-	shooter.x=player1.x;
-	shooter.y=player1.y;
-	target.x=player2.x;
-	target.y=player2.y;
-
 	terrain();
 });
 
@@ -171,11 +168,13 @@ function settingParameter(event){
 function fireShell(shell,shooter) //Mouse Up
 {
   $("canvas").off('mousemove');
+  emitPlayerChange = false;
   if(shell == null && shooter == null){
     shell=this.shell;
     shooter=this.shooter;
     shell.trajectory.x=Math.ceil(shell.trajectory.x*shell.power*10);
 	  shell.trajectory.y=Math.ceil(shell.trajectory.y*shell.power*10);
+    emitPlayerChange = true;
   }
 	if(shell.power!=0){
 	   var ctx=document.getElementById("crtanje").getContext("2d");	//PRAVI PUTANJU
@@ -221,7 +220,7 @@ function fireShell(shell,shooter) //Mouse Up
 	// console.log("animacija radi");
  	requestAnimFrame(function(){
  		te=(new Date().getTime()-pvreme)/3000; //veci delilac,manja brzina
-
+    // debugger;
  		animX=(1-te) * shooter.x + te*((shell.trajectory.x * 2) + shooter.x);
  		animY=Math.pow((1-te),2)*shooter.y + 2*(1-te)*te*(shooter.y - shell.trajectory.y) + Math.pow(te,2)*shooter.y;
     distance=Math.abs(impact.x-shooter.x) - Math.abs(animX-shooter.x);
@@ -234,10 +233,12 @@ function fireShell(shell,shooter) //Mouse Up
  			animacija(shell,shooter,pvreme);
  		}
     else{
-        promena_igraca();
-        $('#crtanje').on('mousemove',function(){
-             aiming(event);
- 	      });
+        // $('#crtanje').on('mousemove',function(){
+        //      aiming(event);
+ 	     //  });
+       if(emitPlayerChange){
+         socket.emit('playerChange');
+       }
         $('#power').width('0px');
     }
  	});
@@ -258,11 +259,11 @@ function calculateAngle(event){
     shell.angle=Math.acos((aim.x-shooter.x)/path);
 }
 function drawHole(){
-    rupa.clearRect(0,0,900,400);
-	rupa.moveTo(impact.x,impact.y);
-	rupa.arc(impact.x,impact.y,25,0,2*Math.PI);
-    rupa.fillStyle="gray";
-    rupa.fill();
+  rupa.clearRect(0,0,900,400);
+  rupa.moveTo(impact.x,impact.y);
+  rupa.arc(impact.x,impact.y,25,0,2*Math.PI);
+  rupa.fillStyle="gray";
+  rupa.fill();
 //	rupa.stroke();
 }
 //function drawHole(){
@@ -288,6 +289,20 @@ function calculateDamage(){
 	$("#damage").text("Steta: "+dmg);
 }
 
+function attachEvents(){
+  console.log('pozvan attachEvents');
+    $('#crtanje').on('mousemove',function(){
+        aiming(event);
+    });
+    $('#crtanje').on('mousedown',function(event){
+      settingParameter(event);
+    });
+    $('#crtanje').on('mouseup',function(){
+      fireShell(null,null);
+      socket.emit('attack',{shell:shell,shooter:shooter});
+      shell.power=0;
+    });
+  }
 //function animacija()
 //{
 //		//console.log("ovo ne tereba da se vidi")
@@ -317,24 +332,24 @@ function calculateDamage(){
 //		},1000 / fps);
 //}
 
-function promena_igraca()	//ovo radi kako treba ali nesto mi nije najasnije zasto!!!
+function promena_igraca(canPlay)	//ovo radi kako treba ali nesto mi nije najasnije zasto!!!
 {
-	switch(igrac_na_potezu)
+	switch(canPlay)
 	{
-		case 1:
-			shooter.x=player1.x;
-			shooter.y=player1.y;
-			target.x=player2.x;
-			target.y=player2.y;
-			igrac_na_potezu=2;
+    case 0:
+			shooter.x=enemy.x;
+			shooter.y=enemy.y;
+			target.x=you.x;
+			target.y=you.y;
+      console.log("promena u metu");
 		break;
-
-		case 2:
-			shooter.x=player2.x;
-			shooter.y=player2.y;
-			target.x=player1.x;
-			target.y=player1.y;
-			igrac_na_potezu=1;
+    
+    case 1:
+			shooter.x=you.x;
+			shooter.y=you.y;
+			target.x=enemy.x;
+			target.y=enemy.y;
+      console.log("promena u napadaca");
 		break;
 	}
 
