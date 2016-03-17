@@ -167,7 +167,7 @@ function settingParameter(event){
 }
 function fireShell(shell,shooter) //Mouse Up
 {
-  $("canvas").off('mousemove');
+  $("canvas").off();
   emitPlayerChange = false;
   if(shell == null && shooter == null){
     shell=this.shell;
@@ -343,7 +343,7 @@ function promena_igraca(canPlay)	//ovo radi kako treba ali nesto mi nije najasni
 			target.y=you.y;
       console.log("promena u metu");
 		break;
-    
+
     case 1:
 			shooter.x=you.x;
 			shooter.y=you.y;
