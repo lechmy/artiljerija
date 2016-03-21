@@ -7,7 +7,7 @@ var roomNumber=0;
 var playersCount=2;
 var playerTurn=0;
 
-var gameRooms = {};
+var gameRooms = {'room_0':{players:[0,1]}};
 var playersRooms = {};
 
 app.use(express.static('public'));
@@ -18,8 +18,8 @@ app.get('/', function (req, res) {
 
 io.on('connection', function (socket) {
     playersRooms[socket.id]={};
-    if(playersCount<2){
-        playersCount++;
+    if(gameRooms['room_'+roomNumber].players.length < 2){
+        // playersCount++;
 
         socket.join('room_'+roomNumber);
         addPlayerData(socket.id,roomNumber);
@@ -30,7 +30,7 @@ io.on('connection', function (socket) {
 //        console.log("room"+roomNumber);
     }
     else{
-        playersCount=1;
+        // playersCount=1;
         roomNumber++;
         playerTurn = Math.floor((Math.random() * 2));
         socket.join('room_'+roomNumber);
@@ -51,7 +51,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('attack', function (data) {
-        socket.to(Object.keys(socket.rooms)[1]).emit('opponentAttack',data);
+      socket.to(Object.keys(socket.rooms)[1]).emit('opponentAttack',data);
     });
 
     socket.on('playerChange',function(){
@@ -67,14 +67,23 @@ io.on('connection', function (socket) {
       }
     });
     socket.on('disconnect',function(){
-      // console.log(socket.rooms);
-      gameRooms[playersRooms[socket.id].roomID].players.forEach(function(item){
-        if(socket.id == item.id){
-          gameRooms[playersRooms[socket.id].roomID].players.pop(item);
-          socket.to(playersRooms[socket.id].roomID).emit('playerLeft',{'playerNumber':item.playerNumber});
-        }
-      });
-playerTurn
+      console.log('\n');
+      console.log("number of players in room: "+gameRooms[playersRooms[socket.id].roomID].players.length);
+      if(gameRooms[playersRooms[socket.id].roomID].players.length < 2){
+        delete gameRooms[playersRooms[socket.id].roomID]
+        console.log(gameRooms);
+        roomNumber--;
+        console.log('roomNumber: '+roomNumber);
+      }
+      else {
+        gameRooms[playersRooms[socket.id].roomID].players.forEach(function(item){
+          if(socket.id == item.id){
+            // gameRooms[playersRooms[socket.id].roomID].players.pop(item);
+            socket.to(playersRooms[socket.id].roomID).emit('playerLeft',{'playerNumber':item.playerNumber});
+          }
+        });
+      }
+      // playerTurn
       // socket.to(Object.keys(socket.rooms)[1]).emit('playerLeft',{playerNumber:gameRooms[''+Object.keys(socket.rooms)[1]].players[socket.id].playerNumber});
       // if(gameRooms[''+Object.keys(socket.rooms)[1]].players.length == 0){
         // roomNumber--;
