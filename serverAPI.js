@@ -1,7 +1,22 @@
 var express = require('express');
 var app = express();
+
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var bodyParser = require('body-parser');
+
+var cookieSession = require('cookie-session');
+
+var router = express.Router();
+
+var auth = require('./server/auth.js');
+
+var statisticDB = require('./models/statisticSchema.js');
+var playersDB = require('./models/playersSchema.js');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/players');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 
 var roomNumber=0;
 var playersCount=2;
@@ -10,11 +25,65 @@ var playerTurn=0;
 var gameRooms = {'room_0':{players:[0,1]}};
 var playersRooms = {};
 
-app.use(express.static('public'));
+app.use('/public', express.static('public'));
+app.use('/private', express.static('private'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['artiljerija']
+}));
+// app.use(app.router);
+
+app.all('/*', auth);
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.redirect('/login');
 });
+app.get('/game', function (req,res){
+  res.sendFile(__dirname + '/private/game.html');
+  // req.sessionOptions.maxAge = req.session.maxAge || req.sessionOptions.maxAge
+  statisticDB.findOne({ username: req.session.user }).exec().then(function(result){
+    statisticDB.update({ username: result.username }, { $inc: { 'gamesPlayed': 1 }}).exec();
+  });
+});
+app.get('/login', function (req, res){
+  res.sendFile(__dirname + '/public/login.html');
+});
+app.post('/login', function (req, res){
+  playersDB.findOne({ username: req.body.username }).exec().then(function(result){
+    if(result!=null && result.password == req.body.password){
+      req.session.user = req.body.username;
+
+      // req.sessionOptions.maxAge = 1200000; // 20 minuta
+      res.redirect('/menu');
+    }
+    else{
+      res.json({status: 'fail', message: 'Pogrešno korisničko ime ili lozinka'});
+    }
+  },function(err){
+    res.redirect('/login');
+  });
+});
+app.get('/logout',function(req, res){
+  req.session = null;
+  res.redirect('/login');
+})
+app.get('/register', function(req, res){
+  res.sendFile(__dirname + '/public/register.html');
+});
+app.post('/register', function(req, res){
+  playersDB.findOne({username: req.body.username}).exec().then(function(result){
+    if(result != null) return res.json({status: 'fail', message: 'Korisnicko ime vec postoji'});
+    playersDB.create({ username: req.body.username, password: req.body.password }).then(function(){
+      statisticDB.create({ username: req.body.username, gamesPlayed: 0});
+      res.redirect('/game');
+    });
+  })
+});
+app.get('/menu', function(req, res){
+  res.sendFile(__dirname + '/private/menu.html');
+})
 
 io.on('connection', function (socket) {
     playersRooms[socket.id]={};
@@ -80,6 +149,7 @@ io.on('connection', function (socket) {
           if(socket.id == item.id){
             // gameRooms[playersRooms[socket.id].roomID].players.pop(item);
             socket.to(playersRooms[socket.id].roomID).emit('playerLeft',{'playerNumber':item.playerNumber});
+            app.get('/menu');
           }
         });
       }

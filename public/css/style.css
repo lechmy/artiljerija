@@ -1,93 +1,55 @@
-#bp
-{
-position:absolute;
-top:410px;
-left:0px;
-width:500px;
-height:60px;
-background-color:green;
-padding:10px;
-border-color:black;
-border-style:solid;
+body{
+  font-family: Helvetica;
 }
-#igrac
-{
-position:absolute;
-top:320px;
-left:700px;
-width:30px;
-height:30px;
-background-color:green;
+div, input, button{
+  box-sizing: border-box;
 }
-body
-{
-background-color:gray;
+form{
+  margin: 55px 15px 45px 15px;
 }
-canvas
-{
-position:absolute;
-top:0px;
-left:0px;
-border-bottom-style:solid;
-border-color:black;
-}
-#powerBar{
+.register,
+.login{
   position: absolute;
-  width: 100px;
-  height: 25px;
-  border: 3px solid black;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  margin: -150px;
+  border: 1px solid #b8b8b8;
 }
-#power{
-  width:0px;
-  height: 25px;
-  overflow: hidden;
+.register input,
+.login input{
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0px auto 10px auto;
+  padding: 5px 10px;
 }
-#powerBackground{
-  width: 100px;
-  height: 25px;
-  background: linear-gradient(to right, yellow , red);
-}
-#playerNumber{
+.register button,
+.login button{
   display: block;
   margin: auto;
-  color: #000;
+  border: none;
+  padding: 10px 20px;
+  background-color: #c7262d;
+  color: #fff;
+}
+.login .new-player{
+  display: block;
+  color: #c7262d;
   font-size: 20px;
+  font-weight: bold;
   text-align: center;
+  text-decoration: none;
 }
-#waiting{
-  position: absolute;
+.toast{
   display: none;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  color: white;
-  font-size: 30px;
-  line-height: 90px;
-  opacity: 0.7;
-}
-#ugao
-{
-position:absolute;
-top:40px;
-left:10px;
-}
-#snaga
-{
-position:absolute;
-top:60px;
-left:10px;
-}
-#damage
-{
-position:absolute;
-top:40px;
-left:100px;
-}
-#pozicija
-{
-position:absolute;
-top:60px;
-left:100px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #c7262d;
+  color: #fff;
+  font-size: 20px;
 }

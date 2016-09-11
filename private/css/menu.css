@@ -1,0 +1,37 @@
+body{
+  font-family: Helvetica;
+}
+div, input, button, a{
+  box-sizing: border-box;
+}
+.menu{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #b8b8b8;
+  padding: 20px;
+}
+.menu .menu-item{
+  display: block;
+  width: 200px;
+  height: 40px;
+  margin: 15px 0px;
+  background-color: #c7262d;
+  color: #fff;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 40px;
+}
+.toast{
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #c7262d;
+  color: #fff;
+  font-size: 20px;
+}
